@@ -7,7 +7,7 @@ import com.axiseditor.ui.TabbedEditorPanel;
 import com.axiseditor.ui.TabbedEditorPanel.TabState;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -48,9 +48,6 @@ public class FileManager {
     // ── Legacy single-file state ──────────────────────────────────────────────
     private File    currentFile;
     private boolean isModified;
-
-    private static final FileNameExtensionFilter SCILAB_FILTER =
-            new FileNameExtensionFilter("Scilab Scripts (*.sce, *.sci)", "sce", "sci");
 
     public FileManager(Window parentWindow) {
         this.parentWindow = parentWindow;
@@ -263,7 +260,18 @@ public class FileManager {
 
     private JFileChooser buildChooser() {
         JFileChooser chooser = new JFileChooser();
-        chooser.setFileFilter(SCILAB_FILTER);
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.resetChoosableFileFilters();
+        chooser.setFileFilter(new FileFilter() {
+            @Override public boolean accept(File f) {
+                if (f.isDirectory()) return true;
+                String n = f.getName().toLowerCase();
+                return n.endsWith(".sce") || n.endsWith(".sci");
+            }
+            @Override public String getDescription() {
+                return "Scilab Scripts (*.sce, *.sci)";
+            }
+        });
         chooser.setAcceptAllFileFilterUsed(true);
         File cur = getCurrentFile();
         if (cur != null) chooser.setCurrentDirectory(cur.getParentFile());

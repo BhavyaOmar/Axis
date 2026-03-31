@@ -64,15 +64,10 @@ public class ToolbarPanel extends JPanel {
         addSep();
 
         // ── Tab group ─────────────────────────────────────────────────────
-        btnNewTab   = btn("+ Tab", "+", new Color(100, 200, 180), "New tab  (Ctrl+T)",   e -> { if (tabbedEditor != null) tabbedEditor.newTab(); });
-        btnCloseTab = btn("✕ Tab", "✕", new Color(220, 100,  80), "Close tab  (Ctrl+W)", e -> { if (tabbedEditor != null) tabbedEditor.closeCurrentTab(); });
-        add(btnNewTab);
-        add(btnCloseTab);
-        addSep();
-
+        
         // ── Execution group ───────────────────────────────────────────────
-        btnRun  = btn("▶  Run",  "▶", new Color( 80, 210,  80), "Run script  (Ctrl+R)", null);
-        btnStop = btn("■  Stop", "■", new Color(220,  80,  80), "Stop execution",        null);
+        btnRun  = btn(" Run",  "▶", new Color( 80, 210,  80), "Run script  (Ctrl+R)", null);
+        btnStop = btn(" Stop", "■", new Color(220,  80,  80), "Stop execution",        null);
         btnRun.setEnabled(false);
         btnStop.setEnabled(false);
         add(btnRun);

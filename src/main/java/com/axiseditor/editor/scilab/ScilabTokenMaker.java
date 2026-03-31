@@ -38,31 +38,65 @@ public class ScilabTokenMaker extends AbstractTokenMaker {
 
     private static final java.util.Set<String> BUILTINS = new java.util.HashSet<>(java.util.Arrays.asList(
         // I/O
-        "disp", "printf", "fprintf", "sprintf", "input", "print",
+        "disp", "printf", "fprintf", "sprintf", "mprintf", "msprintf", "mfprintf",
+        "input", "print", "write", "read", "writeln",
+        // Function definition
+        "deff", "function", "execstr", "exec", "eval",
+        // Calculus / numerical
+        "numderivative", "derivative", "integrate", "intg", "ode", "fsolve",
+        "optim", "lsqrsolve", "roots", "poly", "horner", "derivat",
         // Math
         "abs", "sqrt", "exp", "log", "log2", "log10", "sin", "cos", "tan",
-        "asin", "acos", "atan", "sinh", "cosh", "tanh", "floor", "ceil",
-        "round", "mod", "rem", "sign", "max", "min", "sum", "prod", "mean",
-        "cumsum", "cumprod", "diff",
+        "asin", "acos", "atan", "atan2", "sinh", "cosh", "tanh",
+        "floor", "ceil", "round", "fix", "sign",
+        "max", "min", "sum", "prod", "mean", "median", "variance", "stdev",
+        "cumsum", "cumprod", "diff", "factorial", "gcd", "lcm",
+        "real", "imag", "conj", "angle", "complex",
         // Matrix
         "zeros", "ones", "eye", "rand", "randn", "size", "length", "numel",
-        "reshape", "transpose", "inv", "det", "trace", "norm", "rank",
-        "linspace", "colon", "cross", "dot", "kron",
+        "reshape", "squeeze", "repmat", "transpose", "ctranspose",
+        "inv", "det", "trace", "norm", "rank", "cond", "rcond",
+        "linspace", "logspace", "colon", "ndgrid", "meshgrid",
+        "cross", "dot", "kron", "tril", "triu", "diag",
+        "eig", "svd", "lu", "qr", "chol", "schur",
+        "horzcat", "vertcat", "cat", "find", "sort", "unique",
+        "sparse", "full", "speye", "spzeros",
         // String
-        "string", "num2str", "str2num", "str2double", "strcat", "strsplit",
-        "strtrim", "upper", "lower", "strrep", "strfind", "regexp",
-        "length", "part",
+        "string", "num2str", "str2num", "str2double", "sci2exp",
+        "strcat", "strsplit", "strtrim", "stripblanks",
+        "upper", "lower", "strrep", "strfind", "regexp", "regexpreponce",
+        "length", "part", "ascii", "char", "isdigit", "isalpha",
+        "emptystr", "blanks", "msprintf",
         // Type / util
-        "type", "typeof", "class", "isa", "isnumeric", "ischar", "islogical",
-        "isvector", "ismatrix", "isempty", "isnan", "isinf",
-        "error", "warning", "assert",
-        // File
-        "open", "close", "read", "write", "mopen", "mclose", "mgetl", "mputl",
-        // Plot
-        "plot", "plot2d", "plot3d", "xlabel", "ylabel", "title", "legend",
-        "figure", "clf", "hold", "grid", "subplot", "scatter",
-        // Misc
-        "pause", "sleep", "timer", "tic", "toc", "exec", "exit", "quit"
+        "type", "typeof", "class", "isa",
+        "isnumeric", "ischar", "islogical", "isstring",
+        "isvector", "ismatrix", "isempty", "isnan", "isinf", "isreal",
+        "bool2s", "int8", "int16", "int32", "int64",
+        "uint8", "uint16", "uint32", "uint64", "double",
+        "error", "warning", "assert", "try", "lasterror", "errcatch",
+        // File I/O
+        "open", "close", "mopen", "mclose", "mgetl", "mputl", "mget", "mput",
+        "mgetstr", "mputstr", "meof", "mtell", "mseek",
+        "fscanf", "sscanf", "csvRead", "csvWrite", "fprintfMat", "fscanfMat",
+        "load", "save", "getd",
+        // Plot / graphics
+        "plot", "plot2d", "plot2d2", "plot2d3", "plot3d", "plot3d1",
+        "bar", "barh", "pie", "hist", "histplot",
+        "contour", "contourf", "surf", "mesh", "param3d",
+        "xlabel", "ylabel", "zlabel", "title", "legend",
+        "figure", "clf", "clg", "gcf", "gca", "gce", "gcbo",
+        "hold", "grid", "subplot", "scatter", "scatter3d",
+        "xset", "xget", "xstring", "xsegs", "xpoly", "xrect",
+        "xs2png", "xs2pdf", "xs2svg", "xs2eps", "driver", "xinit", "xend",
+        "drawaxis", "replot", "zoom_rect", "rotate_axes",
+        "colorbar", "colormap", "hotcolormap", "graycolormap",
+        // Misc / control
+        "pause", "sleep", "tic", "toc", "timer", "getdate", "clock",
+        "exit", "quit", "abort",
+        "who", "whos", "clear", "clc", "clearglobal",
+        "getenv", "setenv", "getcwd", "cd", "ls", "dir", "mkdir", "rmdir",
+        "unix", "unix_g", "host",
+        "help", "apropos", "version", "getversion"
     ));
 
     // ── RSyntaxTextArea API ──────────────────────────────────────────────────

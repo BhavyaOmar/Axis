@@ -11,6 +11,7 @@ import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -114,12 +115,18 @@ public class FileExplorerPanel extends JPanel {
         JPanel btnRow = new JPanel(new FlowLayout(FlowLayout.RIGHT, 2, 0));
         btnRow.setBackground(new Color(40, 40, 48));
 
+        JButton btnNewFolder = iconButton("+D", "Create new folder");
+        JButton btnNewFile   = iconButton("+F", "Create new .sci file");
         JButton btnBrowse  = iconButton("…",  "Choose root folder");
         JButton btnRefresh = iconButton("↺",  "Refresh tree");
 
+        btnNewFolder.addActionListener(e -> createNewFolder());
+        btnNewFile.addActionListener(e -> createNewSciFile());
         btnBrowse.addActionListener(e -> browseForRoot());
         btnRefresh.addActionListener(e -> refresh());
 
+        btnRow.add(btnNewFolder);
+        btnRow.add(btnNewFile);
         btnRow.add(btnRefresh);
         btnRow.add(btnBrowse);
         header.add(btnRow, BorderLayout.EAST);
@@ -199,6 +206,79 @@ public class FileExplorerPanel extends JPanel {
         menu.add(refreshItem);
 
         menu.show(tree, x, y);
+    }
+
+    private File getTargetDirectory() {
+        TreePath selected = tree.getSelectionPath();
+        if (selected != null) {
+            Object last = selected.getLastPathComponent();
+            if (last instanceof FileNode node) {
+                if (node.file.isDirectory()) return node.file;
+                File parent = node.file.getParentFile();
+                if (parent != null) return parent;
+            }
+        }
+        return rootDir != null ? rootDir : new File(System.getProperty("user.dir"));
+    }
+
+    private void createNewFolder() {
+        File targetDir = getTargetDirectory();
+        String name = JOptionPane.showInputDialog(
+                this,
+                "Enter folder name:",
+                "Create Folder",
+                JOptionPane.PLAIN_MESSAGE
+        );
+        if (name == null) return;
+        name = name.trim();
+        if (name.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Folder name cannot be empty.", "Invalid Name", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        File folder = new File(targetDir, name);
+        if (folder.exists()) {
+            JOptionPane.showMessageDialog(this, "Folder already exists:\n" + folder.getAbsolutePath(), "Already Exists", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (!folder.mkdirs()) {
+            JOptionPane.showMessageDialog(this, "Could not create folder:\n" + folder.getAbsolutePath(), "Create Folder Failed", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        refresh();
+    }
+
+    private void createNewSciFile() {
+        File targetDir = getTargetDirectory();
+        String name = JOptionPane.showInputDialog(
+                this,
+                "Enter file name (.sci will be added automatically):",
+                "Create Scilab File",
+                JOptionPane.PLAIN_MESSAGE
+        );
+        if (name == null) return;
+        name = name.trim();
+        if (name.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "File name cannot be empty.", "Invalid Name", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (!name.toLowerCase().endsWith(".sci")) {
+            name = name + ".sci";
+        }
+        File file = new File(targetDir, name);
+        if (file.exists()) {
+            JOptionPane.showMessageDialog(this, "File already exists:\n" + file.getAbsolutePath(), "Already Exists", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        try {
+            if (!file.createNewFile()) {
+                JOptionPane.showMessageDialog(this, "Could not create file:\n" + file.getAbsolutePath(), "Create File Failed", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            refresh();
+            fileManager.openFile(file);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Could not create file:\n" + ex.getMessage(), "Create File Failed", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private static boolean isScilabFile(File f) {
